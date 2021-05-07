@@ -15,8 +15,9 @@ function notify_availability() {
 
 const pin = '382424'
 let date = new Date()
-const current_date = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()
+let current_date = '0' + date.getDate() + '-' + '0' + (date.getMonth() + 1) + '-' + date.getFullYear()
 let url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
+console.log("Hitting: " , url)
 
 function check_availability(){
   https.get(url, (resp) => {
