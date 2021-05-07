@@ -13,9 +13,17 @@ function notify_availability() {
   open.exec('open' + ' ' + 'https://selfregistration.cowin.gov.in/appointment')
 }
 
+
+function padding(str,size){
+  while (str.toString().length < 2){
+    str = "0" + str;
+  }
+  return str;
+}
+
 const pin = '382424'
 let date = new Date()
-let current_date = '0' + date.getDate() + '-' + '0' + (date.getMonth() + 1) + '-' + date.getFullYear()
+let current_date = padding(date.getDate()) + '-' + padding(date.getMonth() + 1) + '-' + padding(date.getFullYear())
 let url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
 console.log("Hitting: " , url)
 
@@ -28,16 +36,21 @@ function check_availability(){
     });
     
     resp.on('end', () => {
-      JSON.parse(data)["centers"].forEach( (elem) => {
-        let capacity = elem["sessions"][0]["available_capacity"]
-        let min_age_limit = elem["sessions"][0]["min_age_limit"]
-        if(capacity > 0 && min_age_limit == 18){
-          notify_availability()
-        }else{
-          console.log("Nothing Yet:", capacity, min_age_limit);
-          console.log("--------------------------------------");
-        }
-      })
+      try {
+        let json = JSON.parse(data)
+        json["centers"].forEach( (elem) => {
+          let capacity = elem["sessions"][0]["available_capacity"]
+          let min_age_limit = elem["sessions"][0]["min_age_limit"]
+          if(capacity > 0 && min_age_limit == 18){
+            notify_availability()
+          }else{
+            console.log("Nothing Yet:", capacity, min_age_limit);
+            console.log("--------------------------------------");
+          }
+        })
+      }catch(err){
+        console.error(err)
+      }
     })
   });
 
