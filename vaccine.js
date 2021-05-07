@@ -3,7 +3,7 @@ const path = require('path');
 const https = require('https')
 const open = require('child_process')
 
-function notify_availability() {
+let notify_availability = () => {
   notifier.notify({
     title: 'Vaccine Notification',
     message: 'Vaccine Available',
@@ -14,7 +14,7 @@ function notify_availability() {
 }
 
 
-function padding(str,size){
+let padding = (str,size) => {
   while (str.toString().length < 2){
     str = "0" + str;
   }
@@ -25,9 +25,9 @@ const pin = '382424'
 let date = new Date()
 let current_date = padding(date.getDate()) + '-' + padding(date.getMonth() + 1) + '-' + padding(date.getFullYear())
 let url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
-console.log("Hitting: " , url)
+console.log("Trying URL: " , url)
 
-function check_availability(){
+let check_availability = () => {
   https.get(url, (resp) => {
     let data = '';
 
@@ -44,7 +44,7 @@ function check_availability(){
           if(capacity > 0 && min_age_limit == 18){
             notify_availability()
           }else{
-            console.log("Nothing Yet:", capacity, min_age_limit);
+            console.log("Nothing Yet: ", capacity, min_age_limit);
             console.log("--------------------------------------");
           }
         })
