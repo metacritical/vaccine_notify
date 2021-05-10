@@ -11,7 +11,8 @@ let notify_availability = () => {
     icon: path.join(__dirname, 'covidvaccine.png')
   });
 
-  open.exec('open' + ' ' + 'https://selfregistration.cowin.gov.in/appointment')
+  let cmd = (process.platform == 'darwin'? 'open': process.platform == 'win32'? 'start': 'xdg-open');
+  open.exec(cmd + ' ' + 'https://selfregistration.cowin.gov.in/appointment')
 }
 
 
