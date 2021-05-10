@@ -23,8 +23,6 @@ let padding = (str,size) => {
 }
 
 let age, url;
-
-
 let bootStart = () => {
   process.stdout.write("Enter PIN : ")
   let pin = Number(readline.question())
@@ -35,7 +33,7 @@ let bootStart = () => {
   url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
   console.log("\nRequest URL: " , url, "\n")
 
-  check_availability(url, age)
+  check_availability()
 }
 
 let check_availability = () => {
