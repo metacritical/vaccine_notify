@@ -22,14 +22,21 @@ let padding = (str,size) => {
   return str;
 }
 
-process.stdout.write("Enter PIN : ") 
-let pin = Number(readline.question())
-process.stdout.write("Enter Minimum Age limit 18/45 : ") 
-let age = Number(readline.question())
-let date = new Date()
-let current_date = padding(date.getDate()) + '-' + padding(date.getMonth() + 1) + '-' + padding(date.getFullYear())
-let url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
-console.log("\nRequest URL: " , url, "\n")
+let age, url;
+
+
+let bootStart = () => {
+  process.stdout.write("Enter PIN : ")
+  let pin = Number(readline.question())
+  process.stdout.write("Enter Minimum Age limit 18/45 : ") 
+  age = Number(readline.question())
+  let date = new Date()
+  let current_date = padding(date.getDate()) + '-' + padding(date.getMonth() + 1) + '-' + padding(date.getFullYear())
+  url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
+  console.log("\nRequest URL: " , url, "\n")
+
+  check_availability(url, age)
+}
 
 let check_availability = () => {
   https.get(url, (resp) => {
@@ -65,9 +72,7 @@ let check_availability = () => {
     })
   });
 
-  setTimeout(check_availability , 60000, 'vaccine_check');
+  setTimeout(check_availability , 60000, "");
 }
 
-check_availability()
-
-
+bootStart()
