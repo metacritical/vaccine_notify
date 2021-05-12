@@ -3,6 +3,7 @@ const path = require('path');
 const https = require('https')
 const open = require('child_process')
 const readline = require("readline-sync");
+const colors = require('colors');
 
 let notify_availability = () => {
   notifier.notify({
@@ -37,6 +38,20 @@ let bootStart = () => {
   check_availability()
 }
 
+let print_availability = (capacity, min_age_limit, name) => {
+  let longest = 0
+  let msg = "Availability, Age: "+  capacity + ", " + min_age_limit +  " | Hospital : " + name
+  if(capacity > 0 && min_age_limit == age){
+    notify_availability()
+    console.log(msg.green)
+  }else{ console.log(msg.red) }
+    
+  if(msg.length > longest)
+    longest = msg.length
+  
+  console.log(Array(longest+2).join('-'))
+}
+
 let check_availability = () => {
   https.get(url, (resp) => {
     let data = '';
@@ -48,21 +63,11 @@ let check_availability = () => {
     resp.on('end', () => {
       try {
         let json = JSON.parse(data)
-        let longest = 0
         json["centers"].forEach( (elem) => {
           let capacity = elem["sessions"][0]["available_capacity"]
           let min_age_limit = elem["sessions"][0]["min_age_limit"]
           let name = elem["name"]
-          if(capacity > 0 && min_age_limit == age){
-            notify_availability()
-          }else{
-            let msg = "Availability, Age: "+  capacity + ", " + min_age_limit +  " | Hospital : " + name
-            if(msg.length > longest)
-              longest = msg.length
-            console.log(msg)
-          }
-
-          console.log(Array(longest+2).join('-'))
+          print_availability(capacity, min_age_limit, name)
         })
         console.log("\n")
       }catch(err){
@@ -71,7 +76,7 @@ let check_availability = () => {
     })
   });
 
-  setTimeout(check_availability , 60000, "");
+  setTimeout(check_availability, 60000, "");
 }
 
 bootStart()
