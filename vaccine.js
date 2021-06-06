@@ -14,6 +14,8 @@ let notify_availability = () => {
 
   let cmd = (process.platform == 'darwin'? 'open': process.platform == 'win32'? 'start': 'xdg-open');
   open.exec(cmd + ' ' + 'https://selfregistration.cowin.gov.in/appointment')
+
+  process.exit(1);
 }
 
 
@@ -32,7 +34,7 @@ let bootStart = () => {
   age = Number(readline.question())
   let date = new Date()
   let current_date = padding(date.getDate()) + '-' + padding(date.getMonth() + 1) + '-' + padding(date.getFullYear())
-  url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode=${pin}&date=${current_date}`
+  url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pin}&date=${current_date}`
   console.log("\nRequest URL: " , url, "\n")
 
   check_availability()
@@ -53,7 +55,7 @@ let print_availability = (capacity, min_age_limit, name) => {
 }
 
 let check_availability = () => {
-  https.get(url, (resp) => {
+    https.get(url, (resp) => {
     let data = '';
 
     resp.on('data', (chunk) => {
@@ -62,21 +64,22 @@ let check_availability = () => {
     
     resp.on('end', () => {
       try {
-        let json = JSON.parse(data)
-        json["centers"].forEach( (elem) => {
-          let capacity = elem["sessions"][0]["available_capacity"]
-          let min_age_limit = elem["sessions"][0]["min_age_limit"]
+          let json = JSON.parse(data)
+          console.log(json)
+        json["sessions"].forEach( (elem) => {
+          let capacity = elem["available_capacity"]
+          let min_age_limit = elem["min_age_limit"]
           let name = elem["name"]
           print_availability(capacity, min_age_limit, name)
         })
         console.log("\n")
       }catch(err){
-        console.error(err)
+        console.warn("Parse Error => ".yellow, err)
       }
     })
   });
 
-  setTimeout(check_availability, 60000, "");
+  setTimeout(check_availability, 20000, "");
 }
 
 bootStart()
